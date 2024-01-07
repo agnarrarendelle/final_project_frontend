@@ -14,8 +14,7 @@ const isModalOpen = ref(false)
 onMounted(async () => {
     const res = await getGroups()
     for (const g of res.data) {
-        store.commit(MutationTypes.INIT_GROUP_DETAILS, g.id)
-        store.commit(MutationTypes.ADD_GROUP_ID_AND_NAME, { groupId: g.id, name: g.name })
+        store.commit(MutationTypes.INIT_GROUP_DETAILS, {groupId:g.id, name:g.name})
     }
 })
 

@@ -9,11 +9,10 @@ import {
 
 export type Mutations<S = State> = {
   [MutationTypes.SET_JWT_AUTH_TOKEN](state: S, newToken: string | null): void;
-  [MutationTypes.ADD_GROUP_ID_AND_NAME](
+  [MutationTypes.INIT_GROUP_DETAILS](
     state: S,
     { groupId, name }: { groupId: number; name: string }
   ): void;
-  [MutationTypes.INIT_GROUP_DETAILS](state: S, groupId: number): void;
   [MutationTypes.ADD_GROUP_CATEGORY](
     states: S,
     { groupId, category }: { groupId: number; category: CategoryResponse }
@@ -32,19 +31,13 @@ export const mutations: MutationTree<State> & Mutations = {
   [MutationTypes.SET_JWT_AUTH_TOKEN](state, newToken: string | null) {
     state.jwtAuthToken = newToken;
   },
-  [MutationTypes.ADD_GROUP_ID_AND_NAME](
+  [MutationTypes.INIT_GROUP_DETAILS](
     state,
     { groupId, name }: { groupId: number; name: string }
   ): void {
-    const groupDetail = state.groupDetails.get(groupId)!;
-    groupDetail.name = name
-    groupDetail.id = groupId
-
-  },
-  [MutationTypes.INIT_GROUP_DETAILS](state, group: number): void {
-    state.groupDetails.set(group, {
-      name: "",
-      id:group,
+    state.groupDetails.set(groupId, {
+      name: name,
+      id: groupId,
       categories: [],
       tasks: [],
       users: [],

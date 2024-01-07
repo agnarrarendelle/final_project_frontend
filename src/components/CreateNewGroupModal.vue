@@ -20,8 +20,7 @@ const onFormSubmit = async () => {
     const res = await addGroup(newGroupName.value)
     const { id, name } = res.data
     props.closeModal()
-    store.commit(MutationTypes.INIT_GROUP_DETAILS, id)
-    store.commit(MutationTypes.ADD_GROUP_ID_AND_NAME, { groupId: id, name })
+    store.commit(MutationTypes.INIT_GROUP_DETAILS, { groupId: id, name })
 }
 
 
