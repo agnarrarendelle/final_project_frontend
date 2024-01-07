@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { addGroup } from '../service/api/group';
-import { GroupResponse } from '../service/response_types';
+import { useStore } from "../state"
 import { FwbModal, FwbInput } from "flowbite-vue"
+import { MutationTypes } from '../state/mutation-types';
+
+const store = useStore()
+
 const props = defineProps<{
     closeModal: () => void
-}>()
-const emit = defineEmits<{
-    submit: [newGroup: GroupResponse]
 }>()
 
 const newGroupName = ref("")
@@ -17,8 +18,10 @@ const onFormSubmit = async () => {
         return
 
     const res = await addGroup(newGroupName.value)
+    const { id, name } = res.data
     props.closeModal()
-    emit("submit", res.data)
+    store.commit(MutationTypes.INIT_GROUP_DETAILS, id)
+    store.commit(MutationTypes.ADD_GROUP_ID_AND_NAME, { groupId: id, name })
 }
 
 

@@ -1,14 +1,15 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { addGroupCategory } from '../service/api/group';
-import { CategoryResponse } from '../service/response_types';
 import { FwbModal, FwbInput } from "flowbite-vue"
+import { useStore } from '../state';
+import { MutationTypes } from '../state/mutation-types';
+
+const store = useStore()
+
 const props = defineProps<{
     closeModal: () => void
     groupId: number
-}>()
-const emit = defineEmits<{
-    submit: [newCategory: CategoryResponse]
 }>()
 
 const newCategoryName = ref("")
@@ -18,8 +19,8 @@ const onFormSubmit = async () => {
         return
 
     const res = await addGroupCategory(props.groupId, newCategoryName.value)
+    store.commit(MutationTypes.ADD_GROUP_CATEGORY, { groupId: props.groupId, category: res.data })
     props.closeModal()
-    emit("submit", res.data)
 }
 
 

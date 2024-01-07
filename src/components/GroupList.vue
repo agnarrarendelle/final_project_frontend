@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import { GroupResponse } from '../service/response_types';
+import {useStore} from "../state"
 
-const props = defineProps<{
-    groups: GroupResponse[]
-}>()
+const store = useStore()
 
 </script>
 <template>
     <ul>
-        <li v-for="g in props.groups" class="block">
-            <RouterLink :to="{ path: `/group/${g.id}`}">{{ g.name }}</RouterLink>
+        <li v-for="g in store.getters.groups" class="block">
+            <RouterLink :to="{ path: `/group/${g.id}` }">{{ g.name }}</RouterLink>
         </li>
     </ul>
 </template>

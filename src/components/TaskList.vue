@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { FwbButton } from 'flowbite-vue'
-import { CategoryResponse, TaskResponse } from '../service/response_types';
 import CreateNewTaskModal from './CreateNewTaskModal.vue';
 import { ref } from 'vue';
+import { useStore } from '../state';
+
+const store = useStore()
 
 const props = defineProps<{
-    tasks: TaskResponse[]
-    categories: CategoryResponse[],
     groupId: number
 }>()
 
@@ -34,7 +34,7 @@ const isModalOpen = ref(false)
                         </tr>
                     </thead>
                     <tbody class="text-gray-500">
-                        <tr class="cursor-pointer" v-for="(task) in props.tasks">
+                        <tr class="cursor-pointer" v-for="(task) in store.getters.groupTasks(props.groupId)">
                             <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                                 <p class="whitespace-no-wrap">{{ task.id }}</p>
                             </td>
@@ -63,8 +63,8 @@ const isModalOpen = ref(false)
         <FwbButton @click="() => isModalOpen = true">Create new Task</FwbButton>
     </div>
 
-    <CreateNewTaskModal v-if="isModalOpen" :group-id="$props.groupId" :categories="props.categories"
-        :close-modal="() => isModalOpen = false" @submit="(newTask) => props.tasks.push(newTask)"></CreateNewTaskModal>
+    <CreateNewTaskModal v-if="isModalOpen" :group-id="$props.groupId"
+        :close-modal="() => isModalOpen = false" ></CreateNewTaskModal>
 </template>
 
 <style scoped></style>

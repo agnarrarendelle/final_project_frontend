@@ -3,11 +3,15 @@ import { FwbModal, FwbInput } from "flowbite-vue"
 import { ref, reactive } from "vue"
 import { UserResponse } from '../service/response_types';
 import { searchUsers } from '../service/api/user';
+import { addGroupUser } from "../service/api/group";
+import { useStore } from "../state";
+import { MutationTypes } from "../state/mutation-types";
+
+const store = useStore()
 
 const props = defineProps<{
     groupId: number,
     closeModal: () => void
-    addNewUser: (userId: number) => void
 }>()
 
 const searchResult = reactive<UserResponse[]>([])
@@ -21,6 +25,12 @@ const onSearchButtonClicked = async () => {
     searchResult.length = 0
     searchResult.push(...res.data)
 
+}
+
+const onFormSubmit = async (userId: number) => {
+    const res = await addGroupUser(props.groupId, userId)
+    store.commit(MutationTypes.ADD_GROUP_USER, { groupId: props.groupId, user: res.data })
+    props.closeModal()
 }
 
 </script>
@@ -46,7 +56,7 @@ const onSearchButtonClicked = async () => {
                         </div>
                         <div class="mt-4 flex items-center justify-between">
 
-                            <h6 @click="props.addNewUser(user.id)"
+                            <h6 @click="onFormSubmit(user.id)"
                                 class="font-medium text-indigo-600 hover:text-indigo-500">Add</h6>
                         </div>
                     </div>

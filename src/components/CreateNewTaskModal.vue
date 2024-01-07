@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { CategoryResponse, TaskResponse } from '../service/response_types';
 import { FwbButton, FwbModal, FwbInput, FwbDropdown, FwbListGroup, FwbListGroupItem } from "flowbite-vue"
 import { TaskPriorityLevel, TaskStatus, } from '../service/request_types';
 import DatePicker from "vue3-datepicker"
 import { addGroupTask } from '../service/api/group';
+import { useStore } from "../state"
+import { MutationTypes } from '../state/mutation-types';
+
+const store = useStore()
+
 const props = defineProps<{
     closeModal: () => void
     groupId: number,
-    categories: CategoryResponse[]
 }>()
-const emit = defineEmits<{
-    submit: [bewTask: TaskResponse]
-}>()
-
 
 const taskName = ref("")
 const taskPriorityLevel = ref(TaskPriorityLevel.Medium)
@@ -37,8 +36,7 @@ const onFormSubmit = async () => {
         priorityLevel: taskPriorityLevel.value,
         expiredAt: taskExpiredAt.value
     })
-
-    emit("submit", res.data)
+    store.commit(MutationTypes.ADD_GROUP_TASK, { groupId: props.groupId, task: res.data })
     props.closeModal()
 }
 
@@ -53,7 +51,7 @@ const onFormSubmit = async () => {
             <!-- <FwbInput v-model="newGroupName" label="Enter group name"></FwbInput> -->
             <FwbDropdown :text="taskCategoryName">
                 <FwbListGroup>
-                    <FwbListGroupItem v-for="c in props.categories" @click="() => {
+                    <FwbListGroupItem v-for="c in store.getters.groupCategories(props.groupId)" @click="() => {
                         taskCategoryName = c.name
                         taskCategoryId = c.id
                     }">

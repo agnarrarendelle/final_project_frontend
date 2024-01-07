@@ -1,26 +1,29 @@
 <script setup lang="ts">
-import { onMounted, reactive, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import GroupList from '../components/GroupList.vue';
 import { getGroups } from '../service/api/group';
-import { GroupResponse } from '../service/response_types';
 import { FwbButton } from 'flowbite-vue'
 import CreateNewGroupModalVue from '../components/CreateNewGroupModal.vue';
+import { useStore } from '../state';
+import { MutationTypes } from '../state/mutation-types';
 
-const groups = reactive<GroupResponse[]>([])
+const store = useStore()
+
 const isModalOpen = ref(false)
-onMounted(async () => {
-    console.log(123)
-    const res = await getGroups()
-    groups.push(...res.data)
-})
 
+onMounted(async () => {
+    const res = await getGroups()
+    for (const g of res.data) {
+        store.commit(MutationTypes.INIT_GROUP_DETAILS, g.id)
+        store.commit(MutationTypes.ADD_GROUP_ID_AND_NAME, { groupId: g.id, name: g.name })
+    }
+})
 
 </script>
 <template>
-    <GroupList :groups="groups"></GroupList>
+    <GroupList ></GroupList>
     <FwbButton @click="() => isModalOpen = true">Create new group</FwbButton>
-
-    <CreateNewGroupModalVue v-if="isModalOpen" @submit="(g) => groups.push(g)" :close-modal="() => isModalOpen = false">
+    <CreateNewGroupModalVue v-if="isModalOpen" :close-modal="() => isModalOpen = false">
     </CreateNewGroupModalVue>
 </template>
 
