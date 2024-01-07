@@ -9,6 +9,7 @@ import Home from "../views/Home.vue";
 import Group from "../views/Group.vue";
 import Groups from "../views/Groups.vue";
 import UserEntry from "../views/UserEntry.vue";
+import { checkUserLogin } from "../service/api/user";
 
 const routes: RouteRecordRaw[] = [
   {
@@ -39,5 +40,15 @@ const options: RouterOptions = {
 };
 
 const router: Router = createRouter(options);
+
+router.beforeEach(async (to, _, next) => {
+  const isProtectedRoute = !to.path.includes("/user/entry");
+  if (isProtectedRoute) {
+    const isAuthenticated = await checkUserLogin();
+    if (!isAuthenticated) next({ name: "user entry" });
+  }
+
+  next();
+});
 
 export default router;
