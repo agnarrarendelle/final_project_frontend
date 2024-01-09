@@ -6,15 +6,20 @@ import {
   UserResponse,
   GroupResponse,
 } from "../service/response_types";
+import { Client } from "@stomp/stompjs";
+import { ChatMessage } from "../service/request_types";
 
 export type Getters = {
   jwtAuthToken(state: State): string | null;
+  userId(state: State): number;
   groups(state: State): GroupResponse[];
   groupName(state: State): (groupId: number) => string | undefined;
   groupCategories(state: State): (groupId: number) => CategoryResponse[];
   groupTasks(state: State): (groupId: number) => TaskResponse[];
   groupUsers(state: State): (groupId: number) => UserResponse[];
+  groupChatMessages(state: State): (groupId: number) => ChatMessage[];
   isGroupExist(state: State): (groupId: number) => boolean;
+  wsClient(state: State): Client | null;
 };
 
 export const getters: GetterTree<State, State> & Getters = {
@@ -30,5 +35,8 @@ export const getters: GetterTree<State, State> & Getters = {
     state.groupDetails.get(groupId)!.categories,
   groupTasks: (state) => (groupId) => state.groupDetails.get(groupId)!.tasks,
   groupUsers: (state) => (groupId) => state.groupDetails.get(groupId)!.users,
+  groupChatMessages: (state) => (groupId) =>
+    state.groupDetails.get(groupId)!.chatMessages,
   isGroupExist: (state) => (groupId) => state.groupDetails.has(groupId),
+  wsClient: (state) => state.websocket,
 };
