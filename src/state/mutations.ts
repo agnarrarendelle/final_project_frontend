@@ -28,8 +28,8 @@ export type Mutations<S = State> = {
 };
 
 export const mutations: MutationTree<State> & Mutations = {
-  [MutationTypes.SET_JWT_AUTH_TOKEN](state, newToken: string | null) {
-    state.jwtAuthToken = newToken;
+  [MutationTypes.SET_USER](state, user: UserResponse) {
+    state.user = user;
   },
   [MutationTypes.INIT_GROUP_DETAILS](
     state,

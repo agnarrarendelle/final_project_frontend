@@ -16,7 +16,8 @@ const onFormSubmit = async () => {
         return
 
     const res = await login(name.value, password.value)
-    store.commit(MutationTypes.SET_JWT_AUTH_TOKEN, res.data.token)
+    store.commit(MutationTypes.SET_USER, res.data)
+    store.commit(MutationTypes.INIT_WS_CLIENT)
     router.push({ name: "groups" })
 }
 

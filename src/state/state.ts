@@ -5,7 +5,7 @@ import {
 } from "../service/response_types";
 
 export type State = {
-  jwtAuthToken: string | null;
+  user: UserResponse;
   groupDetails: Map<
     number,
     {
@@ -19,6 +19,6 @@ export type State = {
 };
 
 export const state: State = {
-  jwtAuthToken: "",
+  user: { name: "", token: "", id: -1 },
   groupDetails: new Map(),
 };

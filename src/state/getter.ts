@@ -18,7 +18,8 @@ export type Getters = {
 };
 
 export const getters: GetterTree<State, State> & Getters = {
-  jwtAuthToken: (state) => state.jwtAuthToken,
+  jwtAuthToken: (state) => state.user.token,
+  userId: (state) => state.user.id,
   groups: (state) =>
     Array.from(state.groupDetails, ([groupId, groupDetail]) => ({
       id: groupId,
