@@ -6,9 +6,11 @@ import {
   TaskResponse,
   UserResponse,
 } from "../service/response_types";
+import { Client } from "@stomp/stompjs";
+import { ChatMessage } from "../service/request_types";
 
 export type Mutations<S = State> = {
-  [MutationTypes.SET_JWT_AUTH_TOKEN](state: S, newToken: string | null): void;
+  [MutationTypes.SET_USER](state: S, user: UserResponse): void;
   [MutationTypes.INIT_GROUP_DETAILS](
     state: S,
     { groupId, name }: { groupId: number; name: string }
@@ -24,6 +26,12 @@ export type Mutations<S = State> = {
   [MutationTypes.ADD_GROUP_USER](
     states: S,
     { groupId, user }: { groupId: number; user: UserResponse }
+  ): void;
+  [MutationTypes.INIT_WS_CLIENT](state: S): void;
+  [MutationTypes.ADD_WS_GROUP_SUBSCRIPTION](state: S, groupId: number): void;
+  [MutationTypes.ADD_WS_GROUP_CHAT_MESSAGES](
+    state: S,
+    { groupId, messages }: { groupId: number; messages: ChatMessage[] }
   ): void;
 };
 
@@ -41,6 +49,7 @@ export const mutations: MutationTree<State> & Mutations = {
       categories: [],
       tasks: [],
       users: [],
+      chatMessages: [],
     });
   },
   [MutationTypes.ADD_GROUP_CATEGORY](
@@ -60,5 +69,49 @@ export const mutations: MutationTree<State> & Mutations = {
     { groupId, user }: { groupId: number; user: UserResponse }
   ): void {
     state.groupDetails.get(groupId)?.users.push(user);
+  },
+  [MutationTypes.ADD_WS_GROUP_CHAT_MESSAGES](
+    state,
+    { groupId, messages }: { groupId: number; messages: ChatMessage[] }
+  ): void {
+    state.groupDetails.get(groupId)?.chatMessages.push(...messages)
+  },
+  [MutationTypes.INIT_WS_CLIENT](state): void {
+    const client = new Client({
+      brokerURL: "ws://localhost:7000/websocket",
+      onConnect: () => {
+        console.log("ws connected");
+      },
+      onWebSocketError: (e) => {
+        console.error(e);
+      },
+      onStompError: async (e) => {
+        console.log(e);
+        alert("Failed to get order status. Please re-login again");
+        await client.deactivate();
+      },
+    });
+
+    window.onbeforeunload = async () => {
+      await client.deactivate();
+    };
+
+    state.websocket = client;
+
+    state.websocket.activate();
+  },
+  [MutationTypes.ADD_WS_GROUP_SUBSCRIPTION](state, groupId: number): void {
+    const client = state.websocket;
+    if (client === null) {
+      console.error("Ws not connected");
+      return;
+    }
+    console.log("sub");
+    client.subscribe(`/topic/group-messages/${groupId}`, (message) => {
+      console.log(`Get message from group ${groupId}`);
+      const newMessage: ChatMessage = JSON.parse(message.body);
+      console.log(newMessage);
+      state.groupDetails.get(groupId)?.chatMessages.push(newMessage);
+    });
   },
 };
