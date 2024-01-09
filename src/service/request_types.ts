@@ -21,3 +21,8 @@ export enum TaskStatus {
   Finished = "Finished",
   Expired = "Expired",
 }
+
+export interface ChatMessage {
+  message: string;
+  userId: number;
+}
