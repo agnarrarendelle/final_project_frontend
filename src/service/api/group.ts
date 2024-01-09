@@ -1,5 +1,5 @@
 import axios from "..";
-import { TaskBody } from "../request_types";
+import { ChatMessage, TaskBody } from "../request_types";
 import {
   ApiResponse,
   CategoryResponse,
@@ -8,7 +8,7 @@ import {
   UserResponse,
 } from "../response_types";
 
-const apiRoot = "/group"
+const apiRoot = "/group";
 
 export const addGroup = async (
   name: string
@@ -36,7 +36,6 @@ export const addGroupUser = async (
   groupId: number,
   userId: number
 ): Promise<ApiResponse<UserResponse>> => {
-  console.log("User id: " + userId)
   const res = await axios.post(`${apiRoot}/${groupId}/users`, { id: userId });
   return res.data;
 };
@@ -68,6 +67,16 @@ export const addGroupTask = async (
   categoryId: number,
   body: TaskBody
 ): Promise<ApiResponse<TaskResponse>> => {
-  const res = await axios.post(`${apiRoot}/${groupId}/category/${categoryId}/task`, body);
+  const res = await axios.post(
+    `${apiRoot}/${groupId}/category/${categoryId}/task`,
+    body
+  );
+  return res.data;
+};
+
+export const getChat = async (
+  groupId: number
+): Promise<ApiResponse<ChatMessage[]>> => {
+  const res = await axios.get(`${apiRoot}/${groupId}/chat`);
   return res.data;
 };
