@@ -57,7 +57,7 @@ export const addGroupCategory = async (
 
 export const getGroupTask = async (
   groupId: number,
-  taskId:number
+  taskId: number
 ): Promise<ApiResponse<TaskResponse>> => {
   const res = await axios.get(`${apiRoot}/${groupId}/task/${taskId}`);
   return res.data;
@@ -79,6 +79,15 @@ export const addGroupTask = async (
     `${apiRoot}/${groupId}/category/${categoryId}/task`,
     body
   );
+  return res.data;
+};
+
+export const modifyGroupTask = async (
+  groupId: number,
+  taskId: number,
+  body: TaskBody
+): Promise<ApiResponse<TaskResponse>> => {
+  const res = await axios.put(`${apiRoot}/${groupId}/task/${taskId}`, body);
   return res.data;
 };
 
