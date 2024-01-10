@@ -19,7 +19,12 @@ export interface TaskResponse {
   status: string;
   priorityLevel: string;
   expiredAt: Date;
-  categoryName:string
+  categoryName: string;
+}
+
+export interface TaskWsResponse {
+  task: TaskResponse;
+  type: "Modified" | "Created";
 }
 
 export interface UserResponse {
