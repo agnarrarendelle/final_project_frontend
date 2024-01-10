@@ -4,6 +4,7 @@ import { MutationTree } from "vuex";
 import {
   CategoryResponse,
   TaskResponse,
+  TaskWsResponse,
   UserResponse,
 } from "../service/response_types";
 import { Client } from "@stomp/stompjs";
@@ -28,10 +29,17 @@ export type Mutations<S = State> = {
     { groupId, user }: { groupId: number; user: UserResponse }
   ): void;
   [MutationTypes.INIT_WS_CLIENT](state: S): void;
-  [MutationTypes.ADD_WS_GROUP_CHAT_SUBSCRIPTION](state: S, groupId: number): void;
+  [MutationTypes.ADD_WS_GROUP_CHAT_SUBSCRIPTION](
+    state: S,
+    groupId: number
+  ): void;
   [MutationTypes.ADD_WS_GROUP_CHAT_MESSAGES](
     state: S,
     { groupId, messages }: { groupId: number; messages: ChatMessage[] }
+  ): void;
+  [MutationTypes.ADD_WS_GROUP_TASK_SUBSCRIPTION](
+    state: S,
+    groupId: number
   ): void;
 };
 
@@ -74,7 +82,7 @@ export const mutations: MutationTree<State> & Mutations = {
     state,
     { groupId, messages }: { groupId: number; messages: ChatMessage[] }
   ): void {
-    state.groupDetails.get(groupId)?.chatMessages.push(...messages)
+    state.groupDetails.get(groupId)?.chatMessages.push(...messages);
   },
   [MutationTypes.INIT_WS_CLIENT](state): void {
     const client = new Client({
@@ -113,5 +121,32 @@ export const mutations: MutationTree<State> & Mutations = {
       console.log(newMessage);
       state.groupDetails.get(groupId)?.chatMessages.push(newMessage);
     });
+  },
+  [MutationTypes.ADD_WS_GROUP_TASK_SUBSCRIPTION](state, groupId: number): void {
+    const client = state.websocket;
+    if (client === null) {
+      console.error("Ws not connected");
+      return;
+    }
+    client.subscribe(
+      `/topic/group-messages/${groupId}/task`,
+      async (message) => {
+        const modifiedTask: TaskWsResponse = JSON.parse(message.body);
+        const tasks = state.groupDetails.get(groupId)!.tasks;
+
+        switch (modifiedTask.type) {
+          case "Modified": {
+            const oldTaskIndex = tasks.findIndex((t) => t.id === modifiedTask.task.id);
+            tasks[oldTaskIndex] = modifiedTask.task;
+            break;
+          }
+          case "Created": {
+            console.log(modifiedTask.task)
+            tasks.push(modifiedTask.task);
+            break;
+          }
+        }
+      }
+    );
   },
 };

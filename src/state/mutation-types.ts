@@ -6,5 +6,6 @@ export enum MutationTypes {
   ADD_GROUP_USER = "addGroupUser",
   INIT_WS_CLIENT = "initWsClient",
   ADD_WS_GROUP_CHAT_SUBSCRIPTION = "addWsGroupChatSubscription",
+  ADD_WS_GROUP_TASK_SUBSCRIPTION = "addWsGroupTaskSubscription",
   ADD_WS_GROUP_CHAT_MESSAGES = "addWsGroupChatMessages"
 }
