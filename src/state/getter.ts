@@ -15,6 +15,7 @@ export type Getters = {
   groups(state: State): GroupResponse[];
   groupName(state: State): (groupId: number) => string | undefined;
   groupCategories(state: State): (groupId: number) => CategoryResponse[];
+  groupTask(state: State): (groupId: number, taskId: number) => TaskResponse;
   groupTasks(state: State): (groupId: number) => TaskResponse[];
   groupUsers(state: State): (groupId: number) => UserResponse[];
   groupChatMessages(state: State): (groupId: number) => ChatMessage[];
@@ -33,6 +34,8 @@ export const getters: GetterTree<State, State> & Getters = {
   groupName: (state) => (groupId) => state.groupDetails.get(groupId)!.name,
   groupCategories: (state) => (groupId) =>
     state.groupDetails.get(groupId)!.categories,
+  groupTask: (state) => (groupId, taskId) =>
+    state.groupDetails.get(groupId)!.tasks.find((t) => t.id === taskId)!,
   groupTasks: (state) => (groupId) => state.groupDetails.get(groupId)!.tasks,
   groupUsers: (state) => (groupId) => state.groupDetails.get(groupId)!.users,
   groupChatMessages: (state) => (groupId) =>
