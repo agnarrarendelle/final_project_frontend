@@ -27,7 +27,7 @@ onMounted(async () => {
     tasksResponse.data.forEach(t => store.commit(MutationTypes.ADD_GROUP_TASK, { groupId, task: t }))
     usersResponse.data.forEach(u => store.commit(MutationTypes.ADD_GROUP_USER, { groupId, user: u }))
 
-    store.commit(MutationTypes.ADD_WS_GROUP_SUBSCRIPTION, groupId)
+    store.commit(MutationTypes.ADD_WS_GROUP_CHAT_SUBSCRIPTION, groupId)
     store.commit(MutationTypes.ADD_WS_GROUP_CHAT_MESSAGES, {groupId:groupId, messages:groupChatMessages.data})
 })
 

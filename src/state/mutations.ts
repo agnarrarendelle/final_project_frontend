@@ -28,7 +28,7 @@ export type Mutations<S = State> = {
     { groupId, user }: { groupId: number; user: UserResponse }
   ): void;
   [MutationTypes.INIT_WS_CLIENT](state: S): void;
-  [MutationTypes.ADD_WS_GROUP_SUBSCRIPTION](state: S, groupId: number): void;
+  [MutationTypes.ADD_WS_GROUP_CHAT_SUBSCRIPTION](state: S, groupId: number): void;
   [MutationTypes.ADD_WS_GROUP_CHAT_MESSAGES](
     state: S,
     { groupId, messages }: { groupId: number; messages: ChatMessage[] }
@@ -100,7 +100,7 @@ export const mutations: MutationTree<State> & Mutations = {
 
     state.websocket.activate();
   },
-  [MutationTypes.ADD_WS_GROUP_SUBSCRIPTION](state, groupId: number): void {
+  [MutationTypes.ADD_WS_GROUP_CHAT_SUBSCRIPTION](state, groupId: number): void {
     const client = state.websocket;
     if (client === null) {
       console.error("Ws not connected");
