@@ -29,6 +29,7 @@ onMounted(async () => {
 
     store.commit(MutationTypes.ADD_WS_GROUP_CHAT_SUBSCRIPTION, groupId)
     store.commit(MutationTypes.ADD_WS_GROUP_CHAT_MESSAGES, {groupId:groupId, messages:groupChatMessages.data})
+    store.commit(MutationTypes.ADD_WS_GROUP_TASK_SUBSCRIPTION, groupId)
 })
 
 
