@@ -3,6 +3,7 @@ import { FwbButton } from 'flowbite-vue'
 import CreateNewTaskModal from './CreateNewTaskModal.vue';
 import { ref } from 'vue';
 import { useStore } from '../state';
+import TaskDetailModal from './TaskDetailModal.vue';
 
 const store = useStore()
 
@@ -10,7 +11,9 @@ const props = defineProps<{
     groupId: number
 }>()
 
-const isModalOpen = ref(false)
+const isNewTaskModalOpen = ref(false)
+const isModifyTaskModalOpen = ref(false)
+const selectedTaskId = ref(-1)
 
 </script>
 <template>
@@ -34,7 +37,10 @@ const isModalOpen = ref(false)
                         </tr>
                     </thead>
                     <tbody class="text-gray-500">
-                        <tr class="cursor-pointer" v-for="(task) in store.getters.groupTasks(props.groupId)">
+                        <tr class="cursor-pointer" v-for="(task) in store.getters.groupTasks(props.groupId)" @click="() => {
+                            selectedTaskId = task.id
+                            isModifyTaskModalOpen = true
+                        }">
                             <td class="border-b border-gray-200 bg-white px-5 py-5 text-sm">
                                 <p class="whitespace-no-wrap">{{ task.id }}</p>
                             </td>
@@ -60,11 +66,13 @@ const isModalOpen = ref(false)
                 </table>
             </div>
         </div>
-        <FwbButton @click="() => isModalOpen = true">Create new Task</FwbButton>
+        <FwbButton @click="() => isNewTaskModalOpen = true">Create new Task</FwbButton>
     </div>
 
-    <CreateNewTaskModal v-if="isModalOpen" :group-id="$props.groupId"
-        :close-modal="() => isModalOpen = false" ></CreateNewTaskModal>
+    <CreateNewTaskModal v-if="isNewTaskModalOpen" :group-id="props.groupId" :close-modal="() => isNewTaskModalOpen = false">
+    </CreateNewTaskModal>
+    <TaskDetailModal v-if="isModifyTaskModalOpen" :close-modal="() => isModifyTaskModalOpen = false"
+        :group-id="props.groupId" :task-id="selectedTaskId"></TaskDetailModal>
 </template>
 
 <style scoped></style>
