@@ -39,18 +39,9 @@ const onFormSubmit = async () => {
 
     const websocket = store.getters.wsClient!;
 
-    const { id, name, status, priorityLevel, expiredAt, categoryName } = res.data
-
     const body: TaskWsResponse = {
         type: "Created",
-        task: {
-            id,
-            name,
-            status,
-            priorityLevel,
-            expiredAt,
-            categoryName,
-        }
+        task: res.data
     }
 
     websocket.publish({
