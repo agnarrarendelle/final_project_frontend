@@ -5,7 +5,7 @@ import { TaskPriorityLevel, TaskStatus, } from '../service/request_types';
 import DatePicker from "vue3-datepicker"
 import { addGroupTask } from '../service/api/group';
 import { useStore } from "../state"
-import { MutationTypes } from '../state/mutation-types';
+import { TaskWsResponse } from '../service/response_types';
 
 const store = useStore()
 
@@ -36,7 +36,28 @@ const onFormSubmit = async () => {
         priorityLevel: taskPriorityLevel.value,
         expiredAt: taskExpiredAt.value
     })
-    store.commit(MutationTypes.ADD_GROUP_TASK, { groupId: props.groupId, task: res.data })
+
+    const websocket = store.getters.wsClient!;
+
+    const { id, name, status, priorityLevel, expiredAt, categoryName } = res.data
+
+    const body: TaskWsResponse = {
+        type: "Created",
+        task: {
+            id,
+            name,
+            status,
+            priorityLevel,
+            expiredAt,
+            categoryName,
+        }
+    }
+
+    websocket.publish({
+        destination: `/app/group/${props.groupId}/task/${res.data.id}`,
+        body: JSON.stringify(body)
+    })
+
     props.closeModal()
 }
 
@@ -48,7 +69,6 @@ const onFormSubmit = async () => {
             <h1>Create new group</h1>
         </template>
         <template #body>
-            <!-- <FwbInput v-model="newGroupName" label="Enter group name"></FwbInput> -->
             <FwbDropdown :text="taskCategoryName">
                 <FwbListGroup>
                     <FwbListGroupItem v-for="c in store.getters.groupCategories(props.groupId)" @click="() => {
