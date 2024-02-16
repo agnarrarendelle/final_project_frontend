@@ -16,7 +16,7 @@ export interface CategoryResponse {
 export interface TaskResponse {
   id: number;
   name: string;
-  status: string;
+  status: "InProgress" | "Finished" | "Expired";
   priorityLevel: string;
   expiredAt: Date;
   categoryName: string;
