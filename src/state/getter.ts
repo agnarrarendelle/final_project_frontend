@@ -36,8 +36,8 @@ export const getters: GetterTree<State, State> & Getters = {
     state.groupDetails.get(groupId)!.categories,
   groupTask: (state) => (groupId, taskId) =>
     state.groupDetails.get(groupId)!.tasks.find((t) => t.id === taskId)!,
-  groupTasks: (state) => (groupId) => state.groupDetails.get(groupId)!.tasks,
-  groupUsers: (state) => (groupId) => state.groupDetails.get(groupId)!.users,
+  groupTasks: (state) => (groupId) => state.groupDetails.get(groupId)?.tasks ?? [],
+  groupUsers: (state) => (groupId) => state.groupDetails.get(groupId)?.users ?? [],
   groupChatMessages: (state) => (groupId) =>
     state.groupDetails.get(groupId)!.chatMessages,
   isGroupExist: (state) => (groupId) => state.groupDetails.has(groupId),
