@@ -24,7 +24,8 @@ const onInputSubmitted = () => {
     console.log(message)
     const body: ChatMessage = {
         message: message.value,
-        userId: store.getters.userId
+        userId: store.getters.userId,
+        userName: store.getters.userName
     }
     wsClient.publish({
         destination: `/app/group/${props.groupId}`,
@@ -33,7 +34,7 @@ const onInputSubmitted = () => {
 }
 </script>
 <template>
-    <FwbModal @close="props.closeModal">
+    <FwbModal size="5xl" @close="props.closeModal">
         <template #header>
             <h1>Group chat</h1>
         </template>
@@ -41,17 +42,29 @@ const onInputSubmitted = () => {
             <div class="flex-1 overflow-y-auto p-4 max-h-80">
                 <div class="flex flex-col space-y-2">
                     <template v-for="msg in store.getters.groupChatMessages(props.groupId)">
-                        <div :class="`flex ${store.getters.userId === msg.userId ? 'justify-end' : ''}`">
-                            <div
-                                :class="`text-black p-2 rounded-lg max-w-xs ${store.getters.userId === msg.userId ? 'bg-blue-200' : 'bg-blue-300'}`">
-                                {{ msg.message }}
+                        <div>
+                            <div v-if="store.getters.userId === msg.userId" class="flex justify-end mb-4">
+                                <div
+                                    class="mr-2 py-3 px-4 bg-blue-400 rounded-bl-3xl rounded-tl-3xl rounded-tr-xl text-white">
+                                    {{ msg.message }}
+                                </div>
+                                <h3 class=" object-cover h-8 w-8 rounded-full bg-sky-200 text-center text-gray-400">
+                                    {{ msg.userName[0] }}
+                                </h3>
+                            </div>
+                            <div v-else class="flex justify-start mb-4">
+                                <h3 class=" object-cover h-8 w-8 rounded-full bg-sky-200 text-center text-gray-400">
+                                    {{ msg.userName[0] }}
+                                </h3>
+                                <div
+                                    class="ml-2 py-3 px-4 bg-gray-400 rounded-br-3xl rounded-tr-3xl rounded-tl-xl text-white">
+                                    {{ msg.message }}
+                                </div>
                             </div>
                         </div>
                     </template>
                 </div>
             </div>
-        </template>
-        <template #footer>
             <div class="bg-white p-4 flex items-center">
                 <FwbInput v-model="message" type="text" placeholder="Type your message..."
                     class="flex-1 border rounded-full px-4 py-2 focus:outline-none"></FwbInput>

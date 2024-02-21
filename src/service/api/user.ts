@@ -11,6 +11,15 @@ export const login = async (
   return res.data;
 };
 
+export const register = async (
+  name: string,
+  email: string,
+  password: string
+): Promise<ApiResponse<void>> => {
+  const res = await axios.post(`${RootApiPath}/register`, { name, email, password });
+  return res.data
+};
+
 export const searchUsers = async (
   groupId: number,
   name: string

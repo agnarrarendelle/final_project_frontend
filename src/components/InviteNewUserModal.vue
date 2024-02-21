@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { FwbModal, FwbInput } from "flowbite-vue"
+import { FwbModal } from "flowbite-vue"
 import { ref, reactive } from "vue"
 import { UserResponse } from '../service/response_types';
 import { searchUsers } from '../service/api/user';
@@ -35,39 +35,41 @@ const onFormSubmit = async (userId: number) => {
 
 </script>
 <template>
-    <!-- <FwbInput v-model="searchTerm" label="Search for User"></FwbInput>
-    <button @click="onSearchButtonClicked">Search</button>
-    <ul>
-        <li v-for="u in searchResult">{{ u.name }}</li>
-    </ul> -->
-
     <FwbModal @close="props.closeModal">
         <template #header>
-            <FwbInput v-model="searchTerm" label="Search for User"></FwbInput>
-            <button @click="onSearchButtonClicked">Search</button>
+            <form class="w-full flex flex-col py-5 px-8 rounded-lg" action="">
+                <label class="text-gray-700 font-bold py-2" for="">
+                    Search User
+                </label>
+                <input v-model="searchTerm"
+                    class="text-gray-700 shadow border rounded border-gray-300 focus:outline-none focus:shadow-outline py-1 px-3 mb-3"
+                    type="text" placeholder="Search User">
+                <div class="flex justify-between items-center my-4">
+                    <button @click="onSearchButtonClicked"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded py-2 px-4">
+                        Search
+                    </button>
+                </div>
+            </form>
         </template>
         <template #body>
-            <ul class="bg-white shadow overflow-hidden sm:rounded-md max-w-sm mx-auto">
-                <li v-for="user in searchResult">
-                    <div class="px-4 py-5 sm:px-6">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-lg leading-6 font-medium text-gray-900">{{ user.id }}</h3>
-                            <p class="mt-1 max-w-2xl text-sm text-gray-500">{{ user.name }}</p>
-                        </div>
-                        <div class="mt-4 flex items-center justify-between">
-
-                            <h6 @click="onFormSubmit(user.id)"
-                                class="font-medium text-indigo-600 hover:text-indigo-500">Add</h6>
-                        </div>
+            <ul class="list-none max-h-56">
+                <li v-for="(user, index) in searchResult" class="flex items-center py-4 px-6">
+                    <span class="text-gray-700 text-lg font-medium mr-4">{{ index + 1 }}</span>
+                    <h3 class="mr-8 object-cover h-8 w-8 rounded-full bg-sky-200 text-center text-gray-400">
+                        {{ user.name[0] }}
+                    </h3>
+                    <div class="flex-1">
+                        <h3 class="text-lg font-medium text-gray-800">{{ user.name }}</h3>
+                        <p class="text-gray-600 text-base">id: {{ user.id }}</p>
                     </div>
+                    <button @click="onFormSubmit(user.id)"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded py-2 px-4">
+                        Add
+                    </button>
                 </li>
-
             </ul>
         </template>
-        <template #footer>
-
-        </template>
-
     </FwbModal>
 </template>
 

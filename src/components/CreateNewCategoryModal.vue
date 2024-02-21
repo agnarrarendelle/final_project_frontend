@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { addGroupCategory } from '../service/api/group';
-import { FwbModal, FwbInput } from "flowbite-vue"
+import { FwbModal } from "flowbite-vue"
 import { useStore } from '../state';
 import { MutationTypes } from '../state/mutation-types';
 
@@ -31,10 +31,20 @@ const onFormSubmit = async () => {
             <h1>Create new category</h1>
         </template>
         <template #body>
-            <FwbInput v-model="newCategoryName" label="Enter category name"></FwbInput>
-            <button @click="onFormSubmit">Submit</button>
-        </template>
-        <template #footer>
+            <form class="w-full flex flex-col py-5 px-8 rounded-lg" action="">
+                <label class="text-gray-700 font-bold py-2" for="">
+                    Category Name
+                </label>
+                <input v-model="newCategoryName"
+                    class="text-gray-700 shadow border rounded border-gray-300 focus:outline-none focus:shadow-outline py-1 px-3 mb-3"
+                    type="text" placeholder="Category Name">
+                <div class="flex justify-between items-center my-4">
+                    <button @click="onFormSubmit"
+                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold rounded py-2 px-4">
+                        Submit
+                    </button>
+                </div>
+            </form>
         </template>
     </FwbModal>
 </template>

@@ -1,3 +1,5 @@
+import { TaskStatus } from "./request_types";
+
 export interface ApiResponse<T> {
   msg: string;
   data: T;
@@ -14,9 +16,9 @@ export interface CategoryResponse {
 }
 
 export interface TaskResponse {
-  id: number;
+  readonly id: number;
   name: string;
-  status: "InProgress" | "Finished" | "Expired";
+  status: TaskStatus;
   priorityLevel: string;
   expiredAt: Date;
   categoryName: string;
@@ -31,4 +33,16 @@ export interface UserResponse {
   id: number;
   name: string;
   token: string;
+}
+
+export enum FilterTaskOptionByTaskStatus {
+  AllTask = "All Tasks",
+  CompletedTasks = "Completed Tasks",
+  IncompletedTasks = "Incompleted Tasks"
+}
+
+export enum SortTaskOption {
+  Priority = "Priority",
+  Name = "Name",
+  CreatedTime = "Created Time"
 }

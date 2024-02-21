@@ -3,12 +3,14 @@ import { MutationTypes } from "./mutation-types";
 import { MutationTree } from "vuex";
 import {
   CategoryResponse,
+  FilterTaskOptionByTaskStatus,
+  SortTaskOption,
   TaskResponse,
   TaskWsResponse,
   UserResponse,
 } from "../service/response_types";
 import { Client } from "@stomp/stompjs";
-import { ChatMessage } from "../service/request_types";
+import { ChatMessage, TaskStatus } from "../service/request_types";
 
 export type Mutations<S = State> = {
   [MutationTypes.SET_USER](state: S, user: UserResponse): void;
@@ -23,6 +25,59 @@ export type Mutations<S = State> = {
   [MutationTypes.ADD_GROUP_TASK](
     states: S,
     { groupId, task }: { groupId: number; task: TaskResponse }
+  ): void;
+  [MutationTypes.DELETE_GROUP_TASK](
+    states: S,
+    {
+      groupId,
+      taskId,
+      taskStatus,
+    }: { groupId: number; taskId: number; taskStatus: TaskStatus }
+  ): void;
+  [MutationTypes.SET_FILTERED_GROUP_TASK](
+    states: S,
+    {
+      groupId,
+      filterBy,
+    }: {
+      groupId: number;
+      filterBy: (task: TaskResponse) => boolean;
+    }
+  ): void;
+  [MutationTypes.SORT_FILTERED_GROUP_TASK](
+    states: S,
+    {
+      groupId,
+      sortBy,
+    }: {
+      groupId: number;
+      sortBy: ((a: TaskResponse, b: TaskResponse) => number) | undefined;
+    }
+  ): void;
+  [MutationTypes.FLIP_TASK_STATUS](
+    states: S,
+    {
+      groupId,
+      taskId,
+    }: {
+      groupId: number;
+      taskId: number;
+    }
+  ): void;
+  [MutationTypes.SET_SORT_AND_FILTER_OPTION](
+    states: S,
+    {
+      groupId,
+      options,
+    }: {
+      groupId: number;
+      options: {
+        searchName?: string;
+        taskStatus?: FilterTaskOptionByTaskStatus;
+        sortOption?: SortTaskOption;
+        categoryName?: string;
+      };
+    }
   ): void;
   [MutationTypes.ADD_GROUP_USER](
     states: S,
@@ -56,8 +111,16 @@ export const mutations: MutationTree<State> & Mutations = {
       id: groupId,
       categories: [],
       tasks: [],
+      filteredTasks: [],
       users: [],
       chatMessages: [],
+      taskStatusMap: new Map(Object.values(TaskStatus).map((key) => [key, 0])),
+      sortAndFilteredTask: {
+        searchName: "",
+        taskStatus: FilterTaskOptionByTaskStatus.AllTask,
+        sortOption: SortTaskOption.Name,
+        categoryName: "",
+      },
     });
   },
   [MutationTypes.ADD_GROUP_CATEGORY](
@@ -70,7 +133,122 @@ export const mutations: MutationTree<State> & Mutations = {
     state,
     { groupId, task }: { groupId: number; task: TaskResponse }
   ): void {
-    state.groupDetails.get(groupId)?.tasks.push(task);
+    const groupDeatils = state.groupDetails.get(groupId);
+
+    groupDeatils?.tasks.push(task);
+
+    const taskStatus = task.status;
+
+    groupDeatils?.taskStatusMap.set(
+      taskStatus,
+      groupDeatils?.taskStatusMap.get(taskStatus)! + 1
+    );
+  },
+  [MutationTypes.DELETE_GROUP_TASK](
+    state,
+    {
+      groupId,
+      taskId,
+      taskStatus,
+    }: { groupId: number; taskId: number; taskStatus: TaskStatus }
+  ): void {
+    const groupTasks = state.groupDetails.get(groupId)?.tasks;
+    const filteredArr = groupTasks?.filter((t) => t.id !== taskId)!;
+
+    groupTasks!.length = 0;
+    groupTasks!.push(...filteredArr);
+
+    const taskStatusMap = state.groupDetails.get(groupId)?.taskStatusMap;
+
+    taskStatusMap?.set(taskStatus, taskStatusMap.get(taskStatus)! - 1);
+  },
+  [MutationTypes.SET_FILTERED_GROUP_TASK](
+    states,
+    {
+      groupId,
+      filterBy,
+    }: {
+      groupId: number;
+      filterBy: (task: TaskResponse) => boolean;
+    }
+  ): void {
+    const groupTasks = states.groupDetails.get(groupId)?.tasks!;
+
+    const filteredGroupTasks = states.groupDetails.get(groupId)?.filteredTasks!;
+
+    filteredGroupTasks.length = 0;
+
+    filteredGroupTasks.push(...groupTasks.filter(filterBy));
+  },
+  [MutationTypes.SORT_FILTERED_GROUP_TASK](
+    states,
+    {
+      groupId,
+      sortBy,
+    }: {
+      groupId: number;
+      sortBy: ((a: TaskResponse, b: TaskResponse) => number) | undefined;
+    }
+  ): void {
+    const filteredGroupTasks = states.groupDetails.get(groupId)?.filteredTasks!;
+    filteredGroupTasks.sort(sortBy);
+  },
+  [MutationTypes.FLIP_TASK_STATUS](
+    states,
+    {
+      groupId,
+      taskId,
+    }: {
+      groupId: number;
+      taskId: number;
+    }
+  ): void {
+    const task = states.groupDetails
+      .get(groupId)
+      ?.tasks.find((t) => t.id === taskId)!;
+
+    const taskStatus = states.groupDetails.get(groupId)?.taskStatusMap!;
+
+    taskStatus.set(task.status, taskStatus.get(task.status)! - 1);
+
+    const flipedStatus =
+      task.status === TaskStatus.InProgress
+        ? TaskStatus.Finished
+        : TaskStatus.InProgress;
+
+    taskStatus.set(flipedStatus, taskStatus.get(flipedStatus)! + 1);
+
+    task.status = flipedStatus
+  },
+  [MutationTypes.SET_SORT_AND_FILTER_OPTION](
+    states,
+    {
+      groupId,
+      options,
+    }: {
+      groupId: number;
+      options: {
+        searchName?: string;
+        taskStatus?: FilterTaskOptionByTaskStatus;
+        sortOption?: SortTaskOption;
+        categoryName?: string;
+      };
+    }
+  ): void {
+    const sortAndFilteredTask =
+      states.groupDetails.get(groupId)?.sortAndFilteredTask!;
+
+    if (options.searchName && options.searchName.length > 0)
+      sortAndFilteredTask.searchName = options.searchName;
+
+    if (options.taskStatus) {
+      sortAndFilteredTask.taskStatus = options.taskStatus;
+    }
+
+    if (options.sortOption) sortAndFilteredTask.sortOption = options.sortOption;
+
+    if (options.categoryName || options.categoryName === "")
+      sortAndFilteredTask.categoryName = options.categoryName;
   },
   [MutationTypes.ADD_GROUP_USER](
     state,
@@ -136,12 +314,14 @@ export const mutations: MutationTree<State> & Mutations = {
 
         switch (modifiedTask.type) {
           case "Modified": {
-            const oldTaskIndex = tasks.findIndex((t) => t.id === modifiedTask.task.id);
+            const oldTaskIndex = tasks.findIndex(
+              (t) => t.id === modifiedTask.task.id
+            );
             tasks[oldTaskIndex] = modifiedTask.task;
             break;
           }
           case "Created": {
-            console.log(modifiedTask.task)
+            console.log(modifiedTask.task);
             tasks.push(modifiedTask.task);
             break;
           }

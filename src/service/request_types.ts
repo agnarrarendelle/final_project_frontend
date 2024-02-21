@@ -25,4 +25,5 @@ export enum TaskStatus {
 export interface ChatMessage {
   message: string;
   userId: number;
+  userName:string
 }

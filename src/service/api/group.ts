@@ -63,6 +63,22 @@ export const getGroupTask = async (
   return res.data;
 };
 
+export const deleteGroupTask = async (
+  groupId: number,
+  taskId: number
+): Promise<ApiResponse<null>> => {
+  const res = await axios.delete(`${apiRoot}/${groupId}/task/${taskId}`);
+  return res.data;
+};
+
+export const updateTaskStatus = async (
+  groupId: number,
+  taskId: number
+): Promise<ApiResponse<TaskResponse>> => {
+  const res = await axios.put(`${apiRoot}/${groupId}/task/${taskId}/status`);
+  return res.data;
+};
+
 export const getGroupTasks = async (
   groupId: number
 ): Promise<ApiResponse<TaskResponse[]>> => {
