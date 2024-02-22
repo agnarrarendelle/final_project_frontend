@@ -31,7 +31,7 @@ export type Getters = {
     searchName: string;
     taskStatus: FilterTaskOptionByTaskStatus;
     sortOption: SortTaskOption;
-    categoryName:string
+    categoryName: string;
   };
   groupUsers(state: State): (groupId: number) => UserResponse[];
   groupChatMessages(state: State): (groupId: number) => ChatMessage[];
@@ -63,7 +63,7 @@ export const getters: GetterTree<State, State> & Getters = {
     state.groupDetails.get(groupId)?.taskStatusMap.get(status)!,
   filteredGroupTasks: (state) => (groupId) =>
     state.groupDetails.get(groupId)?.filteredTasks ?? [],
-    filterAndSortOptions: (state) => (groupId) =>
+  filterAndSortOptions: (state) => (groupId) =>
     state.groupDetails.get(groupId)?.sortAndFilteredTask!,
   groupUsers: (state) => (groupId) =>
     state.groupDetails.get(groupId)?.users ?? [],
