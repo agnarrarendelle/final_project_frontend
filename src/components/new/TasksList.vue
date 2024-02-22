@@ -66,6 +66,7 @@ const deleteTask = (taskId: number, status: TaskStatus) => {
 
 </script>
 <template>
+    <h1 class="text-rose-800">**Expired tasks would be deleted every 3 days**</h1>
     <ul
         class="tasksList mt-4 grid gap-2 sm:gap-4 xl:gap-6 2xl:grid-cols-4 xl:grid-cols-3 lg:grid-cols-4 md:grid-cols-3 grid-cols-2 items-end">
         <li v-for="task in props.taskList">
@@ -83,7 +84,7 @@ const deleteTask = (taskId: number, status: TaskStatus) => {
                     <p v-if="!isDateExpired(task.expiredAt) && isDateAboutToDue(task.expiredAt) && task.status === TaskStatus.InProgress"
                         class="mb-2 line-clamp-3 text-rose-600">About to Due!!!
                     </p>
-                    <p v-else-if="isDateExpired(task.expiredAt) && task.status === TaskStatus.InProgress"
+                    <p v-else-if="isDateExpired(task.expiredAt) && task.status === TaskStatus.InProgress || task.status === TaskStatus.Expired"
                         class="mb-2 line-clamp-3 text-rose-600">Expired
                     </p>
                     <time class="mt-auto flex w-full">
