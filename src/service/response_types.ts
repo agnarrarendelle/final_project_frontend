@@ -38,7 +38,8 @@ export interface UserResponse {
 export enum FilterTaskOptionByTaskStatus {
   AllTask = "All Tasks",
   CompletedTasks = "Completed Tasks",
-  IncompletedTasks = "Incompleted Tasks"
+  IncompletedTasks = "Incompleted Tasks",
+  Expired = "Expired"
 }
 
 export enum SortTaskOption {

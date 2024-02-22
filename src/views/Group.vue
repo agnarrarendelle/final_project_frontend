@@ -31,6 +31,8 @@ const filteredAndSortedTasks = computed(() => {
                 return (task: TaskResponse) => task.status === "Finished"
             case FilterTaskOptionByTaskStatus.IncompletedTasks:
                 return (task: TaskResponse) => task.status === "InProgress"
+            case FilterTaskOptionByTaskStatus.Expired:
+                return (task: TaskResponse) => task.status === "Expired"
             default:
                 return (_: TaskResponse) => true
         }
@@ -55,7 +57,6 @@ const filteredAndSortedTasks = computed(() => {
             const cond1 = filteredTaskByStatus()(t)
             const cond2 = searchName.trim().length > 0 ? t.name.includes(searchName) : true
             const cond3 = categoryName.trim().length > 0 ? t.categoryName.trim() === categoryName : true
-            console.log(`cond3 ${cond3}`)
             return cond1 && cond2 && cond3
         })
         .sort(sortedFunction)!
