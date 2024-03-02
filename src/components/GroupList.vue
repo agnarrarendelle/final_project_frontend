@@ -16,7 +16,7 @@ const store = useStore()
                     </span>
                 </span>
             </div>
-            <li v-for="(group, index) in store.getters.groups">
+            <li v-for="(group, index) in [...store.getters.groups].sort((a, b) => a.name.localeCompare(b.name))">
                 <RouterLink :to="{ path: `/group/${group.id}` }">
                     <div class="hover:bg-gray-200 cursor-pointer bg-white shadow flex p-5 items-center mb-5 rounded-lg">
                         <div class="w-1/6 text-center">{{ index + 1 }}</div>
