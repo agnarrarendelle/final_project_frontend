@@ -41,8 +41,8 @@ const isDateExpired = (date: Date): Boolean => {
     const myDate = (new Date(date)).getTime();
 
     const currentDate = (new Date()).getTime();
-    console.log("expired: " + (myDate < currentDate))
-    return myDate < currentDate
+    console.log("expired: " + (myDate > currentDate))
+    return myDate > currentDate
 }
 
 const canTaskBeFlipped = (task: TaskResponse) => {
@@ -84,7 +84,7 @@ const deleteTask = (taskId: number, status: TaskStatus) => {
                     <p v-if="!isDateExpired(task.expiredAt) && isDateAboutToDue(task.expiredAt) && task.status === TaskStatus.InProgress"
                         class="mb-2 line-clamp-3 text-rose-600">About to Due!!!
                     </p>
-                    <p v-else-if="isDateExpired(task.expiredAt) && task.status === TaskStatus.InProgress || task.status === TaskStatus.Expired"
+                    <p v-else-if="isDateExpired(task.expiredAt) && (task.status === TaskStatus.InProgress || task.status === TaskStatus.Expired)"
                         class="mb-2 line-clamp-3 text-rose-600">Expired
                     </p>
                     <time class="mt-auto flex w-full">

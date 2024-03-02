@@ -47,7 +47,7 @@ const filterTask = () => {
                     }
                         " v-for="taskOption in FilterTaskOptionByTaskStatus">
                         <a
-                            :class="`${taskOption === selectedFilterTaskOptionByTaskStatus ? 'text-rose-600' : ' '} px-4 py-2 w-full block transition hover:text-rose-600 dark:hover:text-slate-200 `">
+                            :class="`${taskOption === selectedFilterTaskOptionByTaskStatus ? 'text-rose-600' : ' '} cursor-pointer px-4 py-2 w-full block transition hover:text-rose-600 dark:hover:text-slate-200 `">
                             {{ taskOption }}
                         </a>
                     </li>
@@ -77,7 +77,7 @@ const filterTask = () => {
                             selectedFilterTaskOptionByCategoryName = c.name
                             filterTask()
                         }" v-for="c in store.getters.groupCategories(props.groupId)"
-                            class="flex items-center pr-4 pl-9 py-2 itemDirectory">
+                            class="flex items-center pr-4 pl-9 py-2 itemDirectory cursor-pointer">
                             <div
                                 :class="`${c.name === selectedFilterTaskOptionByCategoryName ? 'text-rose-600' : ' '} hover:text-rose-600 dark:hover:text-slate-200 transition text-ellipsis whitespace-nowrap overflow-hidden max-w-[7rem]`">
                                 {{ c.name }}

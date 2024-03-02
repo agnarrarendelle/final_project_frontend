@@ -31,7 +31,7 @@ const isChatRoomOpen = ref(false)
                     <span>InProgress tasks </span>{{ store.getters.groupTasksNumber(props.groupId, TaskStatus.InProgress) }}
                 </span>
             </div>
-            <span @click="() => isChatRoomOpen = true" class="mt-6 block pt-4 border-t-slate-200 dark:border-t-slate-700/[.3] border-t-2">
+            <span @click="() => isChatRoomOpen = true" class="cursor-pointer hover:text-rose-600 mt-6 block pt-4 border-t-slate-200 dark:border-t-slate-700/[.3] border-t-2">
                 Open Chat Room
             </span>
             <UserList :group-id="props.groupId"></UserList>
